@@ -39,18 +39,20 @@ int main() {
     
     // Accept connections in loop
     while(true) {
-        int client_fd = accept(server_fd, NULL, NULL);
-        if (client_fd < 0) continue;
-        
-        // Simple HTTP response
-        std::string response = "HTTP/1.1 200 OK\r\n";
-        response += "Content-Type: text/plain\r\n";
-        response += "Connection: close\r\n\r\n";
-        response += "Served by backend: " + std::string(hostname) + "\n";
-        
-        send(client_fd, response.c_str(), response.length(), 0);
-        close(client_fd);
-    }
+   	 int client_fd = accept(server_fd, NULL, NULL);
+   	 if (client_fd < 0) continue;
+	
+   	 char buffer[4096];
+   	 read(client_fd, buffer, sizeof(buffer));  // 🔥 READ REQUEST FIRST
+
+   	 std::string response = "HTTP/1.1 200 OK\r\n";
+   	 response += "Content-Type: text/plain\r\n";
+   	 response += "Connection: close\r\n\r\n";
+   	 response += "Served by backend: " + std::string(hostname) + "\n";
+
+   	 send(client_fd, response.c_str(), response.length(), 0);
+   	 close(client_fd);
+	}
     
     return 0;
 }
